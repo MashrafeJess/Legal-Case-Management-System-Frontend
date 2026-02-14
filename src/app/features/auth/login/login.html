@@ -1,0 +1,62 @@
+<div class="container-fluid vh-100 d-flex align-items-center justify-content-center bg-light">
+  <div class="card shadow-sm" style="width: 100%; max-width: 420px;">
+    <div class="card-body p-4">
+
+      <!-- Logo -->
+      <div class="text-center mb-4">
+        <h4 class="fw-bold text-primary mb-0">JurisFlow</h4>
+        <small class="text-muted">Case Management System</small>
+      </div>
+
+      <!-- Alert -->
+      <div class="alert alert-danger py-2 small" *ngIf="errorMessage">
+        {{ errorMessage }}
+      </div>
+
+      <!-- Form -->
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+
+        <div class="mb-3">
+          <label class="form-label small fw-semibold">Email Address</label>
+          <input
+            type="email"
+            class="form-control"
+            formControlName="email"
+            placeholder="your@email.com"
+            [class.is-invalid]="isInvalid('email')"
+          />
+          <div class="invalid-feedback">Please enter a valid email.</div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label small fw-semibold">Password</label>
+          <input
+            type="password"
+            class="form-control"
+            formControlName="password"
+            placeholder="Enter your password"
+            [class.is-invalid]="isInvalid('password')"
+          />
+          <div class="invalid-feedback">Password is required.</div>
+        </div>
+
+        <button
+          type="submit"
+          class="btn btn-primary w-100"
+          [disabled]="loading">
+          <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>
+          {{ loading ? 'Logging in...' : 'Login' }}
+        </button>
+
+      </form>
+
+      <div class="text-center mt-3">
+        <small class="text-muted">
+          Can't access your account?
+          <a routerLink="/forgot-password" class="text-primary">Reset Password</a>
+        </small>
+      </div>
+
+    </div>
+  </div>
+</div>
