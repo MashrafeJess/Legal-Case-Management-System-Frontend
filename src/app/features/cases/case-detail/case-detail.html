@@ -1,1 +1,124 @@
-<p>case-detail works!</p>
+<div class="d-flex min-vh-100">
+  <app-sidebar />
+
+  <div class="flex-grow-1 bg-light">
+
+    <!-- Top Bar -->
+    <div class="bg-white border-bottom px-4 py-3 d-flex align-items-center gap-3">
+      <button class="btn btn-sm btn-outline-secondary" (click)="goBack()">← Back</button>
+      <h6 class="mb-0 fw-semibold">Case Detail</h6>
+    </div>
+
+    <div class="p-4">
+
+      <!-- Loading -->
+      <div class="text-center py-5" *ngIf="loading">
+        <div class="spinner-border text-primary"></div>
+      </div>
+
+      <ng-container *ngIf="!loading && caseDetail">
+
+        <div class="row g-4">
+
+          <!-- Case Info -->
+          <div class="col-12 col-lg-6">
+            <div class="card border-0 shadow-sm h-100">
+              <div class="card-header bg-white border-bottom fw-semibold small">
+                Case Information
+              </div>
+              <div class="card-body">
+                <table class="table table-borderless small mb-0">
+                  <tr>
+                    <td class="text-muted fw-semibold" style="width:140px;">Case ID</td>
+                    <td>{{ caseDetail.caseId }}</td>
+                  </tr>
+                  <tr>
+                    <td class="text-muted fw-semibold">Case Name</td>
+                    <td>{{ caseDetail.caseName || '—' }}</td>
+                  </tr>
+                  <tr>
+                    <td class="text-muted fw-semibold">Case Type</td>
+                    <td>{{ caseDetail.caseTypeName || '—' }}</td>
+                  </tr>
+                  <tr>
+                    <td class="text-muted fw-semibold">Handling By</td>
+                    <td>{{ caseDetail.handlingBy || '—' }}</td>
+                  </tr>
+                  <tr>
+                    <td class="text-muted fw-semibold">Fee</td>
+                    <td>৳ {{ caseDetail.fee }}</td>
+                  </tr>
+                  <tr>
+                    <td class="text-muted fw-semibold">Created By</td>
+                    <td>{{ caseDetail.createdBy }}</td>
+                  </tr>
+                  <tr>
+                    <td class="text-muted fw-semibold">Created Date</td>
+                    <td>{{ caseDetail.createdDate | date:'medium' }}</td>
+                  </tr>
+                  <tr>
+                    <td class="text-muted fw-semibold">Updated By</td>
+                    <td>{{ caseDetail.updatedBy }}</td>
+                  </tr>
+                  <tr>
+                    <td class="text-muted fw-semibold">Updated Date</td>
+                    <td>{{ caseDetail.updatedDate ? (caseDetail.updatedDate | date:'medium') : '—' }}</td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- Files -->
+          <div class="col-12 col-lg-6">
+            <div class="card border-0 shadow-sm h-100">
+              <div class="card-header bg-white border-bottom fw-semibold small d-flex justify-content-between align-items-center">
+                <span>Attachments ({{ caseDetail.files?.length || 0 }})</span>
+              </div>
+              <div class="card-body p-0">
+                <ul class="list-group list-group-flush small">
+                  <li class="list-group-item d-flex align-items-center justify-content-between py-2 px-3"
+                      *ngFor="let file of caseDetail.files">
+                    <div class="d-flex align-items-center gap-2">
+                      <span>{{ getFileIcon(file.contentType) }}</span>
+                      <div>
+                        <div class="fw-semibold">{{ file.fileName }}</div>
+                        <div class="text-muted" style="font-size:11px;">
+                          {{ formatSize(file.size) }} · {{ file.createdDate | date:'mediumDate' }}
+                        </div>
+                      </div>
+                    </div>
+                    <button class="btn btn-outline-primary btn-sm"
+                            (click)="downloadFile(file.fileId, file.fileName)">
+                      ⬇
+                    </button>
+                  </li>
+                  <li class="list-group-item text-center text-muted py-3"
+                      *ngIf="!caseDetail.files?.length">
+                    No attachments found.
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="mt-3 d-flex gap-2" *ngIf="isAdmin || isLawyer">
+          <button class="btn btn-warning btn-sm"
+                  (click)="editCase()">
+            Edit Case
+          </button>
+          <button class="btn btn-danger btn-sm"
+                  *ngIf="isAdmin"
+                  (click)="deleteCase()">
+            Delete Case
+          </button>
+        </div>
+
+      </ng-container>
+
+    </div>
+  </div>
+</div>

@@ -65,7 +65,11 @@ export const routes: Routes = [
         data: { roles: ['Admin'] },
         loadComponent: () => import('./features/users/user-list/user-list')
           .then(m => m.UserList)
-      }
+      },
+      { path: 'cases', loadComponent: () => import('./features/cases/case-list/case-list').then(m => m.CaseList) },
+      { path: 'cases/create', loadComponent: () => import('./features/cases/case-form/case-form').then(m => m.CaseForm) },
+      { path: 'cases/edit/:id', loadComponent: () => import('./features/cases/case-form/case-form').then(m => m.CaseForm) },
+      { path: 'cases/:id', loadComponent: () => import('./features/cases/case-detail/case-detail').then(m => m.CaseDetail) },
     ]
   },
 

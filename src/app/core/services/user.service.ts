@@ -6,7 +6,7 @@ import { environment } from '../../../environment/environment';
 export class UserService {
   private url = `${environment.apiUrl}/user`;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   register(payload: any) {
     return this.http.post<any>(`${this.url}/register`, payload);
@@ -26,5 +26,8 @@ export class UserService {
 
   delete(userId: string) {
     return this.http.delete<any>(`${this.url}/delete/${userId}`);
+  }
+  getLawyers() {
+    return this.http.get<any>(`${this.url}/lawyers`);
   }
 }
