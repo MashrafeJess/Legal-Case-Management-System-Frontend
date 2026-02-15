@@ -3,25 +3,29 @@
 
   <div class="flex-grow-1 bg-light">
 
-    <!-- Top Bar -->
     <div class="bg-white border-bottom px-4 py-3 d-flex align-items-center gap-3">
-      <button class="btn btn-sm btn-outline-secondary" (click)="goBack()">← Back</button>
-      <h6 class="mb-0 fw-semibold">{{ isEditMode ? 'Edit Case' : 'New Case' }}</h6>
+      <button class="btn btn-sm btn-outline-secondary"
+              (click)="goBack()">← Back</button>
+      <h6 class="mb-0 fw-semibold">
+        {{ isEditMode ? 'Edit Case' : 'New Case' }}
+      </h6>
     </div>
 
     <div class="p-4">
       <div class="card border-0 shadow-sm" style="max-width: 640px;">
         <div class="card-body p-4">
 
-          <!-- Alert -->
-          <div class="alert alert-danger small py-2" *ngIf="errorMessage">{{ errorMessage }}</div>
-          <div class="alert alert-success small py-2" *ngIf="successMessage">{{ successMessage }}</div>
+          <div class="alert alert-danger small py-2"
+               *ngIf="errorMessage">{{ errorMessage }}</div>
+          <div class="alert alert-success small py-2"
+               *ngIf="successMessage">{{ successMessage }}</div>
 
           <form [formGroup]="caseForm" (ngSubmit)="onSubmit()">
 
             <div class="mb-3">
               <label class="form-label small fw-semibold">Case Name</label>
-              <input type="text" class="form-control"
+              <input type="text"
+                     class="form-control"
                      formControlName="caseName"
                      placeholder="e.g. Robbery Case"
                      [class.is-invalid]="isInvalid('caseName')"/>
@@ -30,7 +34,8 @@
 
             <div class="mb-3">
               <label class="form-label small fw-semibold">Email</label>
-              <input type="email" class="form-control"
+              <input type="email"
+                     class="form-control"
                      formControlName="email"
                      placeholder="client@email.com"
                      [class.is-invalid]="isInvalid('email')"/>
@@ -44,7 +49,8 @@
                         formControlName="caseType"
                         [class.is-invalid]="isInvalid('caseType')">
                   <option value="">Select type</option>
-                  <option *ngFor="let t of caseTypes" [value]="t.caseTypeId">
+                  <option *ngFor="let t of caseTypes"
+                          [value]="t.caseTypeId">
                     {{ t.caseTypeName }}
                   </option>
                 </select>
@@ -52,7 +58,8 @@
               </div>
               <div class="col-6">
                 <label class="form-label small fw-semibold">Fee (৳)</label>
-                <input type="number" class="form-control"
+                <input type="number"
+                       class="form-control"
                        formControlName="fee"
                        placeholder="0"
                        [class.is-invalid]="isInvalid('fee')"/>
@@ -61,7 +68,9 @@
             </div>
 
             <div class="mb-3">
-              <label class="form-label small fw-semibold">Handling Lawyer</label>
+              <label class="form-label small fw-semibold">
+                Handling Lawyer
+              </label>
               <select class="form-select"
                       formControlName="caseHandlingBy"
                       [class.is-invalid]="isInvalid('caseHandlingBy')">
@@ -70,35 +79,46 @@
                   {{ l.userName }}
                 </option>
               </select>
-              <div class="invalid-feedback">Please select a lawyer.</div>
+              <div class="invalid-feedback">
+                Please select a lawyer.
+              </div>
             </div>
 
             <div class="mb-4">
               <label class="form-label small fw-semibold">
                 Attachments
-                <span class="text-muted fw-normal">(PDF, images, docs)</span>
+                <span class="text-muted fw-normal">
+                  (PDF, images, docs — optional)
+                </span>
               </label>
               <input type="file"
                      class="form-control"
                      multiple
                      (change)="onFilesSelected($event)"
                      accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png"/>
-              <!-- Selected files preview -->
-              <ul class="list-unstyled mt-2 mb-0" *ngIf="selectedFiles.length > 0">
+              <ul class="list-unstyled mt-2 mb-0"
+                  *ngIf="selectedFiles.length > 0">
                 <li class="small text-muted d-flex align-items-center gap-1"
                     *ngFor="let f of selectedFiles">
                   📎 {{ f.name }}
-                  <span class="text-muted">({{ formatSize(f.size) }})</span>
+                  <span>({{ formatSize(f.size) }})</span>
                 </li>
               </ul>
             </div>
 
             <div class="d-flex gap-2">
-              <button type="submit" class="btn btn-primary btn-sm" [disabled]="loading">
-                <span *ngIf="loading" class="spinner-border spinner-border-sm me-1"></span>
-                {{ loading ? 'Saving...' : (isEditMode ? 'Update Case' : 'Create Case') }}
+              <button type="submit"
+                      class="btn btn-primary btn-sm"
+                      [disabled]="loading">
+                <span *ngIf="loading"
+                      class="spinner-border spinner-border-sm me-1"></span>
+                {{ loading
+                    ? 'Saving...'
+                    : (isEditMode ? 'Update Case' : 'Create Case') }}
               </button>
-              <button type="button" class="btn btn-outline-secondary btn-sm" (click)="goBack()">
+              <button type="button"
+                      class="btn btn-outline-secondary btn-sm"
+                      (click)="goBack()">
                 Cancel
               </button>
             </div>

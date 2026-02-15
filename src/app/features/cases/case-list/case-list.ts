@@ -1,4 +1,7 @@
-import { Component, OnInit, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
+import {
+  Component, OnInit,
+  ChangeDetectorRef, ChangeDetectionStrategy
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
@@ -19,6 +22,7 @@ export class CaseList implements OnInit {
   errorMessage        = '';
   isAdmin             = false;
   isLawyer            = false;
+  isClient            = false;
 
   constructor(
     private caseService: CaseService,
@@ -31,13 +35,12 @@ export class CaseList implements OnInit {
     const role    = this.authService.getRole();
     this.isAdmin  = role === 'Admin';
     this.isLawyer = role === 'Lawyer';
+    this.isClient = role === 'Client';
     this.loadCases();
 
     this.router.events
       .pipe(filter(e => e instanceof NavigationEnd))
-      .subscribe(() => {
-        this.loadCases();
-      });
+      .subscribe(() => this.loadCases());
   }
 
   loadCases(): void {
@@ -45,7 +48,12 @@ export class CaseList implements OnInit {
     this.errorMessage = '';
     this.cdr.detectChanges();
 
-    this.caseService.getAll().subscribe({
+    // Lawyer sees his own cases, others see all
+    const request = this.isLawyer
+      ? this.caseService.getByLawyer(this.authService.getUserId())
+      : this.caseService.getAll();
+
+    request.subscribe({
       next: (res) => {
         if (res.success) this.cases = res.data;
         else this.errorMessage      = res.message;
@@ -60,8 +68,20 @@ export class CaseList implements OnInit {
     });
   }
 
-  viewCase(id: number):   void { this.router.navigate(['/cases', id]); }
-  editCase(id: number):   void { this.router.navigate(['/cases/edit', id]); }
+  viewCase(id: number): void {
+    this.router.navigate(['/cases', id]);
+  }
+
+  editCase(id: number): void {
+    this.router.navigate(['/cases/edit', id]);
+  }
+
+  // ✅ Client pays consultation fee
+  payFee(caseId: number, fee: number): void {
+    this.router.navigate(['/payments/initiate'], {
+      queryParams: { caseId, amount: fee }
+    });
+  }
 
   deleteCase(id: number): void {
     if (!confirm('Delete this case?')) return;
