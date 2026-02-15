@@ -3,8 +3,8 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environment/environment';
 
 @Injectable({ providedIn: 'root' })
-export class CaseTypeService {
-  private url = `${environment.apiUrl}/type`;
+export class PaymentMethodService {
+  private url = `${environment.apiUrl}/paymentmethod`;
   constructor(private http: HttpClient) {}
   getAll() { return this.http.get<any>(`${this.url}/getall`); }
 }

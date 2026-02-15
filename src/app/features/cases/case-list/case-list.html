@@ -1,24 +1,23 @@
 <div class="d-flex min-vh-100">
-  <!-- Sidebar -->
   <app-sidebar />
 
-  <!-- Content -->
   <div class="flex-grow-1 bg-light">
-    <!-- Top Bar -->
+
     <div class="bg-white border-bottom px-4 py-3 d-flex align-items-center justify-content-between">
       <h6 class="mb-0 fw-semibold">All Cases</h6>
-      <button class="btn btn-primary btn-sm" routerLink="/cases/create" *ngIf="isAdmin || isLawyer">
+      <button class="btn btn-primary btn-sm"
+              routerLink="/cases/create"
+              *ngIf="isAdmin || isLawyer || isClient">
         + New Case
       </button>
     </div>
 
     <div class="p-4">
-      <!-- Alert -->
+
       <div class="alert alert-danger small py-2" *ngIf="errorMessage">
         {{ errorMessage }}
       </div>
 
-      <!-- Table -->
       <div class="card border-0 shadow-sm">
         <div class="card-body p-0">
           <div class="table-responsive">
@@ -27,63 +26,74 @@
                 <tr>
                   <th class="px-3 py-2">#</th>
                   <th class="px-3 py-2">Case Name</th>
-                  <th class="px-3 py-2">Email</th>
-                  <th class="px-3 py-2">Handling By</th>
                   <th class="px-3 py-2">Type</th>
+                  <th class="px-3 py-2">Handling By</th>
                   <th class="px-3 py-2">Fee (৳)</th>
+                  <th class="px-3 py-2">Fee Status</th>
                   <th class="px-3 py-2">Actions</th>
                 </tr>
               </thead>
               <tbody>
-                <!-- Loading -->
+
                 <tr *ngIf="loading">
                   <td colspan="7" class="text-center py-4">
                     <div class="spinner-border spinner-border-sm text-primary"></div>
                   </td>
                 </tr>
 
-                <!-- Rows — only show when NOT loading -->
                 <ng-container *ngIf="!loading">
                   <tr *ngFor="let c of cases; let i = index">
                     <td class="px-3 py-2">{{ i + 1 }}</td>
                     <td class="px-3 py-2">{{ c.caseName || '—' }}</td>
-                    <td class="px-3 py-2">{{ c.email }}</td>
-                    <td class="px-3 py-2">{{ c.caseHandlingBy || '—' }}</td>
                     <td class="px-3 py-2">{{ c.typeName || '—' }}</td>
+                    <td class="px-3 py-2">{{ c.caseHandlingBy || '—' }}</td>
                     <td class="px-3 py-2">{{ c.fee }}</td>
                     <td class="px-3 py-2">
-                      <div class="d-flex gap-1">
-                        <button class="btn btn-outline-primary btn-sm" (click)="viewCase(c.caseId)">
+                      <span class="badge"
+                            [ngClass]="c.isConsultationFeePaid
+                              ? 'bg-success'
+                              : 'bg-warning text-dark'">
+                        {{ c.isConsultationFeePaid ? 'Paid' : 'Unpaid' }}
+                      </span>
+                    </td>
+                    <td class="px-3 py-2">
+                      <div class="d-flex gap-1 flex-wrap">
+                        <button class="btn btn-outline-primary btn-sm"
+                                (click)="viewCase(c.caseId)">
                           View
                         </button>
-                        <button
-                          class="btn btn-outline-warning btn-sm"
-                          *ngIf="isAdmin || isLawyer"
-                          (click)="editCase(c.caseId)"
-                        >
+                        <button class="btn btn-success btn-sm"
+                                *ngIf="isClient && !c.isConsultationFeePaid"
+                                (click)="payFee(c.caseId, c.fee)">
+                          Pay Fee
+                        </button>
+                        <button class="btn btn-outline-warning btn-sm"
+                                *ngIf="isAdmin || isLawyer"
+                                (click)="editCase(c.caseId)">
                           Edit
                         </button>
-                        <button
-                          class="btn btn-outline-danger btn-sm"
-                          *ngIf="isAdmin"
-                          (click)="deleteCase(c.caseId)"
-                        >
+                        <button class="btn btn-outline-danger btn-sm"
+                                *ngIf="isAdmin"
+                                (click)="deleteCase(c.caseId)">
                           Delete
                         </button>
                       </div>
                     </td>
                   </tr>
 
-                  <!-- Empty -->
                   <tr *ngIf="cases.length === 0">
-                    <td colspan="7" class="text-center text-muted py-4">No cases found.</td>
+                    <td colspan="7" class="text-center text-muted py-4">
+                      No cases found.
+                    </td>
                   </tr>
                 </ng-container>
+
               </tbody>
             </table>
           </div>
         </div>
       </div>
+
     </div>
   </div>
 </div>

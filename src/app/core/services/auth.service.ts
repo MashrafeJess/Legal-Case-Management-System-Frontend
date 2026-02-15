@@ -48,4 +48,8 @@ export class AuthService {
   private hasToken(): boolean {
     return !!localStorage.getItem(this.TOKEN_KEY);
   }
+  getUserId(): string {
+  const user = this.getUser();
+  return user?.userId ?? '';
+}
 }

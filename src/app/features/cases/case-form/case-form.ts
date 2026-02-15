@@ -1,4 +1,7 @@
-import { Component, OnInit, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
+import {
+  Component, OnInit,
+  ChangeDetectorRef, ChangeDetectionStrategy
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -139,18 +142,18 @@ export class CaseForm implements OnInit {
     this.cdr.detectChanges();
 
     const fd = new FormData();
-    fd.append('caseName',       this.caseForm.value.caseName);
-    fd.append('email',          this.caseForm.value.email);
-    fd.append('caseType',       this.caseForm.value.caseType);
-    fd.append('fee',            this.caseForm.value.fee);
-    fd.append('caseHandlingBy', this.caseForm.value.caseHandlingBy);
+    fd.append('CaseName',       this.caseForm.value.caseName);
+    fd.append('Email',          this.caseForm.value.email);
+    fd.append('CaseTypeId',     this.caseForm.value.caseType);
+    fd.append('Fee',            this.caseForm.value.fee);
+    fd.append('CaseHandlingBy', this.caseForm.value.caseHandlingBy);
 
     if (this.isEditMode) {
-      fd.append('caseId', this.caseId.toString());
+      fd.append('CaseId', this.caseId.toString());
     }
 
     this.selectedFiles.forEach(file => {
-      fd.append('formFiles', file, file.name);
+      fd.append('FormFiles', file, file.name);
     });
 
     const request = this.isEditMode
@@ -160,9 +163,25 @@ export class CaseForm implements OnInit {
     request.subscribe({
       next: (res) => {
         if (res.success) {
-          this.successMessage = `Case ${this.isEditMode ? 'updated' : 'created'} successfully!`;
-          this.cdr.detectChanges();
-          setTimeout(() => this.router.navigate(['/cases']), 1500);
+          if (!this.isEditMode) {
+            // ✅ New case — redirect to pay consultation fee
+            this.successMessage = 'Case created! Redirecting to payment...';
+            this.cdr.detectChanges();
+            setTimeout(() => {
+              this.router.navigate(['/payments/initiate'], {
+                queryParams: {
+                  caseId: res.data.caseId,
+                  amount: res.data.fee
+                }
+              });
+            }, 1500);
+          } else {
+            // Edit — go back to case detail
+            this.successMessage = 'Case updated successfully!';
+            this.cdr.detectChanges();
+            setTimeout(() =>
+              this.router.navigate(['/cases', this.caseId]), 1500);
+          }
         } else {
           this.errorMessage = res.message || 'Operation failed.';
         }
@@ -179,4 +198,3 @@ export class CaseForm implements OnInit {
 
   goBack(): void { this.router.navigate(['/cases']); }
 }
-

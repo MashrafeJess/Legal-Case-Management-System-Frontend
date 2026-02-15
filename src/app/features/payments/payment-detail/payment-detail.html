@@ -1,0 +1,94 @@
+<div class="d-flex min-vh-100">
+  <app-sidebar />
+
+  <div class="flex-grow-1 bg-light">
+
+    <div class="bg-white border-bottom px-4 py-3 d-flex align-items-center gap-3">
+      <button class="btn btn-sm btn-outline-secondary"
+              (click)="goBack()">← Back</button>
+      <h6 class="mb-0 fw-semibold">Payment Detail</h6>
+    </div>
+
+    <div class="p-4">
+
+      <div class="text-center py-5" *ngIf="loading">
+        <div class="spinner-border text-primary"></div>
+      </div>
+
+      <div class="alert alert-danger small py-2" *ngIf="errorMessage">
+        {{ errorMessage }}
+      </div>
+
+      <ng-container *ngIf="!loading && payment">
+        <div class="card border-0 shadow-sm" style="max-width: 540px;">
+          <div class="card-header bg-white border-bottom fw-semibold small">
+            Payment Information
+          </div>
+          <div class="card-body">
+            <table class="table table-borderless small mb-0">
+              <tr>
+                <td class="text-muted fw-semibold" style="width:160px;">
+                  Payment ID
+                </td>
+                <td style="font-size:11px;">{{ payment.paymentId }}</td>
+              </tr>
+              <tr>
+                <td class="text-muted fw-semibold">Case ID</td>
+                <td>{{ payment.caseId }}</td>
+              </tr>
+              <tr>
+                <td class="text-muted fw-semibold">Amount</td>
+                <td class="fw-bold">৳ {{ payment.amount | number }}</td>
+              </tr>
+              <tr>
+                <td class="text-muted fw-semibold">Status</td>
+                <td>
+                  <span class="badge"
+                        [ngClass]="{
+                          'bg-success':           payment.status === 'SUCCESS',
+                          'bg-danger':            payment.status === 'FAILED',
+                          'bg-warning text-dark': payment.status === 'PENDING',
+                          'bg-secondary':         payment.status === 'CANCELLED'
+                        }">
+                    {{ payment.status }}
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <td class="text-muted fw-semibold">Method</td>
+                <td>{{ payment.paymentMethodName }}</td>
+              </tr>
+              <tr>
+                <td class="text-muted fw-semibold">Transaction ID</td>
+                <td style="font-size:11px;">
+                  {{ payment.transactionId || '—' }}
+                </td>
+              </tr>
+              <tr>
+                <td class="text-muted fw-semibold">Validation ID</td>
+                <td style="font-size:11px;">
+                  {{ payment.validationId || '—' }}
+                </td>
+              </tr>
+              <tr>
+                <td class="text-muted fw-semibold">Created By</td>
+                <td>{{ payment.createdBy }}</td>
+              </tr>
+              <tr>
+                <td class="text-muted fw-semibold">Date</td>
+                <td>{{ payment.createdDate | date:'medium' }}</td>
+              </tr>
+            </table>
+          </div>
+          <div class="card-footer bg-white border-top">
+            <button class="btn btn-outline-secondary btn-sm"
+                    (click)="viewCase()">
+              View Case
+            </button>
+          </div>
+        </div>
+      </ng-container>
+
+    </div>
+  </div>
+</div>

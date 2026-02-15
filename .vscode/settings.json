@@ -3,9 +3,12 @@
         "alltype",
         "casetype",
         "Commerz",
+        "getbyid",
+        "getcasebylawyer",
         "Juris",
         "lcms",
         "libpeerconnection",
+        "paymentmethod",
         "testem"
     ]
 }
