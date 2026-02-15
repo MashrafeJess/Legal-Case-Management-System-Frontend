@@ -1,0 +1,117 @@
+<div class="d-flex flex-column bg-primary text-white p-3"
+     style="width: 240px; min-height: 100vh; position: sticky; top: 0;">
+
+  <!-- Logo -->
+  <div class="text-center border-bottom border-white border-opacity-25 pb-3 mb-3">
+    <h5 class="fw-bold mb-0">JurisFlow</h5>
+    <small class="opacity-75">Case Management</small>
+  </div>
+
+  <!-- User Info -->
+  <div class="text-center mb-3">
+    <div class="bg-white text-primary rounded-circle d-inline-flex align-items-center
+                justify-content-center fw-bold mb-1"
+         style="width:40px; height:40px; font-size:15px;">
+      {{ userInitial }}
+    </div>
+    <div class="small fw-semibold">{{ userName }}</div>
+    <span class="badge bg-white text-primary mt-1" style="font-size:10px;">
+      {{ userRole }}
+    </span>
+  </div>
+
+  <!-- Nav -->
+  <nav class="flex-grow-1">
+    <ul class="nav flex-column gap-1">
+
+      <li class="nav-item">
+        <a routerLink="/dashboard"
+           routerLinkActive="bg-white text-primary fw-semibold"
+           class="nav-link text-white rounded px-3 py-2 d-flex align-items-center gap-2 hover-nav">
+          🏠 <span>Dashboard</span>
+        </a>
+      </li>
+
+      <li class="nav-item">
+        <a routerLink="/cases"
+           routerLinkActive="bg-white text-primary fw-semibold"
+           class="nav-link text-white rounded px-3 py-2 d-flex align-items-center gap-2 hover-nav">
+          ⚖️ <span>All Cases</span>
+        </a>
+      </li>
+
+      <li class="nav-item" *ngIf="isAdmin || isLawyer">
+        <a routerLink="/mail"
+           routerLinkActive="bg-white text-primary fw-semibold"
+           class="nav-link text-white rounded px-3 py-2 d-flex align-items-center gap-2 hover-nav">
+          📧 <span>Send Mail</span>
+        </a>
+      </li>
+
+      <li class="nav-item">
+        <a routerLink="/payments"
+           routerLinkActive="bg-white text-primary fw-semibold"
+           class="nav-link text-white rounded px-3 py-2 d-flex align-items-center gap-2 hover-nav">
+          💳 <span>All Payments</span>
+        </a>
+      </li>
+
+      <li class="nav-item" *ngIf="isAdmin">
+        <a routerLink="/payment-methods"
+           routerLinkActive="bg-white text-primary fw-semibold"
+           class="nav-link text-white rounded px-3 py-2 d-flex align-items-center gap-2 hover-nav">
+          🏦 <span>Payment Methods</span>
+        </a>
+      </li>
+
+      <li class="nav-item" *ngIf="isAdmin">
+        <a routerLink="/roles"
+           routerLinkActive="bg-white text-primary fw-semibold"
+           class="nav-link text-white rounded px-3 py-2 d-flex align-items-center gap-2 hover-nav">
+          🔑 <span>All Roles</span>
+        </a>
+      </li>
+
+      <li class="nav-item" *ngIf="isAdmin">
+        <a routerLink="/case-types"
+           routerLinkActive="bg-white text-primary fw-semibold"
+           class="nav-link text-white rounded px-3 py-2 d-flex align-items-center gap-2 hover-nav">
+          🗂️ <span>Case Types</span>
+        </a>
+      </li>
+
+      <li class="nav-item" *ngIf="isAdmin || isLawyer">
+        <a routerLink="/clients"
+           routerLinkActive="bg-white text-primary fw-semibold"
+           class="nav-link text-white rounded px-3 py-2 d-flex align-items-center gap-2 hover-nav">
+          👤 <span>All Clients</span>
+        </a>
+      </li>
+
+      <li class="nav-item" *ngIf="isAdmin">
+        <a routerLink="/lawyers"
+           routerLinkActive="bg-white text-primary fw-semibold"
+           class="nav-link text-white rounded px-3 py-2 d-flex align-items-center gap-2 hover-nav">
+          👨‍⚖️ <span>All Lawyers</span>
+        </a>
+      </li>
+
+      <li class="nav-item" *ngIf="isAdmin">
+        <a routerLink="/reports"
+           routerLinkActive="bg-white text-primary fw-semibold"
+           class="nav-link text-white rounded px-3 py-2 d-flex align-items-center gap-2 hover-nav">
+          📊 <span>Reports</span>
+        </a>
+      </li>
+
+    </ul>
+  </nav>
+
+  <!-- Logout -->
+  <div class="border-top border-white border-opacity-25 pt-3 mt-2">
+    <button class="btn btn-outline-light btn-sm w-100" (click)="logout()">
+      🚪 Logout
+    </button>
+  </div>
+
+</div>
