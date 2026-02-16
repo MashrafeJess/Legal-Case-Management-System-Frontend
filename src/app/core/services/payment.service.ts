@@ -9,7 +9,7 @@ export class PaymentService {
   constructor(private http: HttpClient) {}
 
   getAll() {
-    return this.http.get<any>(`${this.url}/getall`);
+    return this.http.get<any>(`${this.url}/all`);
   }
 
   getByCaseId(caseId: number) {
@@ -31,5 +31,14 @@ export class PaymentService {
     customerAddress: string;
   }) {
     return this.http.post<any>(`${this.url}/initiate`, payload);
+  }
+
+  cashPayment(payload: {
+    caseId:          number;
+    hearingId?:      number | null;
+    amount:          number;
+    paymentMethodId: number;
+  }) {
+    return this.http.post<any>(`${this.url}/cash`, payload);
   }
 }

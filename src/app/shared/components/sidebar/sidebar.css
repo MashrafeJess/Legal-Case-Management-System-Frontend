@@ -1,0 +1,28 @@
+.nav-item-link {
+      transition: background 0.2s;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+
+    .nav-item-link:hover {
+      background: rgba(255, 255, 255, 0.15) !important;
+    }
+
+    .active-nav {
+      background: white !important;
+      color: #1a56db !important;
+      font-weight: 600;
+    }
+
+    .active-nav .nav-label {
+      color: #1a56db !important;
+    }
+
+    /* ✅ Fix — ensure label text is always visible */
+    .nav-label {
+      color: white;
+      font-size: 0.85rem;
+      display: inline !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+    }

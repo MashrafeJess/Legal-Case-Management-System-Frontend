@@ -1,0 +1,159 @@
+<div class="d-flex min-vh-100">
+  <app-sidebar />
+
+  <div class="flex-grow-1 bg-light">
+
+    <div class="bg-white border-bottom px-4 py-3 d-flex
+                align-items-center justify-content-between">
+      <h6 class="mb-0 fw-semibold">Payment Methods</h6>
+      <button class="btn btn-primary btn-sm"
+              (click)="openForm()">
+        + Add Method
+      </button>
+    </div>
+
+    <div class="p-4">
+
+      <!-- Inline Form -->
+      <div class="card border-0 shadow-sm mb-4" *ngIf="showForm">
+        <div class="card-header bg-white border-bottom fw-semibold small">
+          {{ editingId ? 'Edit Payment Method' : 'Add Payment Method' }}
+        </div>
+        <div class="card-body">
+
+          <div class="alert alert-danger small py-2"
+               *ngIf="formError">{{ formError }}</div>
+
+          <form [formGroup]="methodForm" (ngSubmit)="onSubmit()">
+            <div class="row g-3 align-items-end">
+
+              <div class="col-12 col-sm-4">
+                <label class="form-label small fw-semibold">
+                  Method Name
+                </label>
+                <input type="text"
+                       class="form-control form-control-sm"
+                       formControlName="paymentMethodName"
+                       placeholder="e.g. Cash, Bkash, Nagad"
+                       [class.is-invalid]="isInvalid('paymentMethodName')"/>
+                <div class="invalid-feedback">Name is required.</div>
+              </div>
+
+              <!-- Status toggle — edit mode only -->
+              <div class="col-auto" *ngIf="editingId">
+                <label class="form-label small fw-semibold d-block">
+                  Status
+                </label>
+                <div class="form-check form-switch mt-1">
+                  <input class="form-check-input"
+                         type="checkbox"
+                         formControlName="paymentStatus"
+                         id="statusToggle"/>
+                  <label class="form-check-label small"
+                         for="statusToggle">
+                    {{ methodForm.get('paymentStatus')?.value
+                        ? 'Active' : 'Inactive' }}
+                  </label>
+                </div>
+              </div>
+
+              <div class="col-auto d-flex gap-2">
+                <button type="submit"
+                        class="btn btn-primary btn-sm"
+                        [disabled]="formLoading">
+                  <span *ngIf="formLoading"
+                        class="spinner-border spinner-border-sm me-1"></span>
+                  {{ formLoading
+                      ? 'Saving...'
+                      : (editingId ? 'Update' : 'Add') }}
+                </button>
+                <button type="button"
+                        class="btn btn-outline-secondary btn-sm"
+                        (click)="cancelForm()">
+                  Cancel
+                </button>
+              </div>
+
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Alerts -->
+      <div class="alert alert-danger small py-2" *ngIf="errorMessage">
+        {{ errorMessage }}
+      </div>
+      <div class="alert alert-success small py-2" *ngIf="successMessage">
+        {{ successMessage }}
+      </div>
+
+      <!-- Table -->
+      <div class="card border-0 shadow-sm">
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table table-hover mb-0 small">
+              <thead class="table-light">
+                <tr>
+                  <th class="px-3 py-2">#</th>
+                  <th class="px-3 py-2">Method Name</th>
+                  <th class="px-3 py-2">Status</th>
+                  <th class="px-3 py-2">Created Date</th>
+                  <th class="px-3 py-2">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+
+                <tr *ngIf="loading">
+                  <td colspan="5" class="text-center py-4">
+                    <div class="spinner-border spinner-border-sm text-primary"></div>
+                  </td>
+                </tr>
+
+                <ng-container *ngIf="!loading">
+                  <tr *ngFor="let m of methods; let i = index">
+                    <td class="px-3 py-2">{{ i + 1 }}</td>
+                    <td class="px-3 py-2 fw-semibold">
+                      {{ m.paymentMethodName }}
+                    </td>
+                    <td class="px-3 py-2">
+                      <span class="badge"
+                            [ngClass]="m.paymentStatus
+                              ? 'bg-success'
+                              : 'bg-secondary'">
+                        {{ m.paymentStatus ? 'Active' : 'Inactive' }}
+                      </span>
+                    </td>
+                    <td class="px-3 py-2">
+                      {{ m.createdDate | date:'mediumDate' }}
+                    </td>
+                    <td class="px-3 py-2">
+                      <div class="d-flex gap-1">
+                        <button class="btn btn-outline-warning btn-sm"
+                                (click)="editMethod(m)">
+                          Edit
+                        </button>
+                        <button class="btn btn-outline-danger btn-sm"
+                                (click)="deleteMethod(m.paymentMethodId)">
+                          Delete
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+
+                  <tr *ngIf="methods.length === 0">
+                    <td colspan="5"
+                        class="text-center text-muted py-4">
+                      No payment methods found.
+                    </td>
+                  </tr>
+                </ng-container>
+
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

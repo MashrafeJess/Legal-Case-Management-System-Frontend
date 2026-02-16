@@ -17,23 +17,23 @@ import { Sidebar } from '../../../shared/components/sidebar/sidebar';
   templateUrl: './case-list.html'
 })
 export class CaseList implements OnInit {
-  cases:        any[] = [];
-  loading             = true;
-  errorMessage        = '';
-  isAdmin             = false;
-  isLawyer            = false;
-  isClient            = false;
+  cases: any[] = [];
+  loading = true;
+  errorMessage = '';
+  isAdmin = false;
+  isLawyer = false;
+  isClient = false;
 
   constructor(
     private caseService: CaseService,
     private authService: AuthService,
-    private router:      Router,
-    private cdr:         ChangeDetectorRef
-  ) {}
+    private router: Router,
+    private cdr: ChangeDetectorRef
+  ) { }
 
   ngOnInit(): void {
-    const role    = this.authService.getRole();
-    this.isAdmin  = role === 'Admin';
+    const role = this.authService.getRole();
+    this.isAdmin = role === 'Admin';
     this.isLawyer = role === 'Lawyer';
     this.isClient = role === 'Client';
     this.loadCases();
@@ -44,25 +44,22 @@ export class CaseList implements OnInit {
   }
 
   loadCases(): void {
-    this.loading      = true;
+    this.loading = true;
     this.errorMessage = '';
     this.cdr.detectChanges();
 
-    // Lawyer sees his own cases, others see all
-    const request = this.isLawyer
-      ? this.caseService.getByLawyer(this.authService.getUserId())
-      : this.caseService.getAll();
-
-    request.subscribe({
+    // ✅ All roles use same endpoint
+    // Backend filters by role automatically
+    this.caseService.getAll().subscribe({
       next: (res) => {
         if (res.success) this.cases = res.data;
-        else this.errorMessage      = res.message;
+        else this.errorMessage = res.message;
         this.loading = false;
         this.cdr.detectChanges();
       },
       error: () => {
         this.errorMessage = 'Failed to load cases.';
-        this.loading      = false;
+        this.loading = false;
         this.cdr.detectChanges();
       }
     });

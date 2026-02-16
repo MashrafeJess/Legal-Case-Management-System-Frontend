@@ -1,21 +1,25 @@
-<div class="d-flex flex-column bg-primary text-white p-3"
-     style="width: 240px; min-height: 100vh; position: sticky; top: 0;">
+<div class="d-flex flex-column text-white p-3"
+     style="width: 240px; min-height: 100vh;
+            position: sticky; top: 0;
+            background-color: #1a56db;">
 
   <!-- Logo -->
   <div class="text-center border-bottom border-white border-opacity-25 pb-3 mb-3">
-    <h5 class="fw-bold mb-0">JurisFlow</h5>
+    <h5 class="fw-bold mb-0">⚖️ JurisFlow</h5>
     <small class="opacity-75">Case Management</small>
   </div>
 
   <!-- User Info -->
   <div class="text-center mb-3">
-    <div class="bg-white text-primary rounded-circle d-inline-flex align-items-center
-                justify-content-center fw-bold mb-1"
-         style="width:40px; height:40px; font-size:15px;">
+    <div class="bg-white text-primary rounded-circle d-inline-flex
+                align-items-center justify-content-center fw-bold mb-1"
+         style="width:40px; height:40px; font-size:15px;
+                color: #1a56db !important;">
       {{ userInitial }}
     </div>
     <div class="small fw-semibold">{{ userName }}</div>
-    <span class="badge bg-white text-primary mt-1" style="font-size:10px;">
+    <span class="badge bg-white mt-1"
+          style="font-size:10px; color: #1a56db;">
       {{ userRole }}
     </span>
   </div>
@@ -26,81 +30,101 @@
 
       <li class="nav-item">
         <a routerLink="/dashboard"
-           routerLinkActive="bg-white text-primary fw-semibold"
-           class="nav-link text-white rounded px-3 py-2 d-flex align-items-center gap-2 hover-nav">
-          🏠 <span>Dashboard</span>
+           routerLinkActive="active-nav"
+           class="nav-link text-white rounded px-3 py-2
+                  d-flex align-items-center gap-2 nav-item-link">
+          🏠 <span class="nav-label">Dashboard</span>
         </a>
       </li>
 
       <li class="nav-item">
         <a routerLink="/cases"
-           routerLinkActive="bg-white text-primary fw-semibold"
-           class="nav-link text-white rounded px-3 py-2 d-flex align-items-center gap-2 hover-nav">
-          ⚖️ <span>All Cases</span>
+           routerLinkActive="active-nav"
+           class="nav-link text-white rounded px-3 py-2
+                  d-flex align-items-center gap-2 nav-item-link">
+          ⚖️ <span class="nav-label">All Cases</span>
         </a>
       </li>
 
       <li class="nav-item" *ngIf="isAdmin || isLawyer">
         <a routerLink="/mail"
-           routerLinkActive="bg-white text-primary fw-semibold"
-           class="nav-link text-white rounded px-3 py-2 d-flex align-items-center gap-2 hover-nav">
-          📧 <span>Send Mail</span>
+           routerLinkActive="active-nav"
+           class="nav-link text-white rounded px-3 py-2
+                  d-flex align-items-center gap-2 nav-item-link">
+          📧 <span class="nav-label">Send Mail</span>
         </a>
       </li>
 
       <li class="nav-item">
         <a routerLink="/payments"
-           routerLinkActive="bg-white text-primary fw-semibold"
-           class="nav-link text-white rounded px-3 py-2 d-flex align-items-center gap-2 hover-nav">
-          💳 <span>All Payments</span>
+           routerLinkActive="active-nav"
+           class="nav-link text-white rounded px-3 py-2
+                  d-flex align-items-center gap-2 nav-item-link">
+          💳 <span class="nav-label">All Payments</span>
         </a>
       </li>
 
       <li class="nav-item" *ngIf="isAdmin">
         <a routerLink="/payment-methods"
-           routerLinkActive="bg-white text-primary fw-semibold"
-           class="nav-link text-white rounded px-3 py-2 d-flex align-items-center gap-2 hover-nav">
-          🏦 <span>Payment Methods</span>
+           routerLinkActive="active-nav"
+           class="nav-link text-white rounded px-3 py-2
+                  d-flex align-items-center gap-2 nav-item-link">
+          🏦 <span class="nav-label">Payment Methods</span>
         </a>
       </li>
 
       <li class="nav-item" *ngIf="isAdmin">
         <a routerLink="/roles"
-           routerLinkActive="bg-white text-primary fw-semibold"
-           class="nav-link text-white rounded px-3 py-2 d-flex align-items-center gap-2 hover-nav">
-          🔑 <span>All Roles</span>
+           routerLinkActive="active-nav"
+           class="nav-link text-white rounded px-3 py-2
+                  d-flex align-items-center gap-2 nav-item-link">
+          🔑 <span class="nav-label">All Roles</span>
         </a>
       </li>
 
       <li class="nav-item" *ngIf="isAdmin">
         <a routerLink="/case-types"
-           routerLinkActive="bg-white text-primary fw-semibold"
-           class="nav-link text-white rounded px-3 py-2 d-flex align-items-center gap-2 hover-nav">
-          🗂️ <span>Case Types</span>
+           routerLinkActive="active-nav"
+           class="nav-link text-white rounded px-3 py-2
+                  d-flex align-items-center gap-2 nav-item-link">
+          🗂️ <span class="nav-label">Case Types</span>
         </a>
       </li>
 
       <li class="nav-item" *ngIf="isAdmin || isLawyer">
         <a routerLink="/clients"
-           routerLinkActive="bg-white text-primary fw-semibold"
-           class="nav-link text-white rounded px-3 py-2 d-flex align-items-center gap-2 hover-nav">
-          👤 <span>All Clients</span>
+           routerLinkActive="active-nav"
+           class="nav-link text-white rounded px-3 py-2
+                  d-flex align-items-center gap-2 nav-item-link">
+          👤 <span class="nav-label">All Clients</span>
         </a>
       </li>
 
       <li class="nav-item" *ngIf="isAdmin">
         <a routerLink="/lawyers"
-           routerLinkActive="bg-white text-primary fw-semibold"
-           class="nav-link text-white rounded px-3 py-2 d-flex align-items-center gap-2 hover-nav">
-          👨‍⚖️ <span>All Lawyers</span>
+           routerLinkActive="active-nav"
+           class="nav-link text-white rounded px-3 py-2
+                  d-flex align-items-center gap-2 nav-item-link">
+          👨‍⚖️ <span class="nav-label">All Lawyers</span>
+        </a>
+      </li>
+
+      <!-- ✅ Add User — Admin only -->
+      <li class="nav-item" *ngIf="isAdmin">
+        <a routerLink="/users/create"
+           routerLinkActive="active-nav"
+           class="nav-link text-white rounded px-3 py-2
+                  d-flex align-items-center gap-2 nav-item-link">
+          ➕ <span class="nav-label">Add User</span>
         </a>
       </li>
 
       <li class="nav-item" *ngIf="isAdmin">
         <a routerLink="/reports"
-           routerLinkActive="bg-white text-primary fw-semibold"
-           class="nav-link text-white rounded px-3 py-2 d-flex align-items-center gap-2 hover-nav">
-          📊 <span>Reports</span>
+           routerLinkActive="active-nav"
+           class="nav-link text-white rounded px-3 py-2
+                  d-flex align-items-center gap-2 nav-item-link">
+          📊 <span class="nav-label">Reports</span>
         </a>
       </li>
 
@@ -109,8 +133,9 @@
 
   <!-- Logout -->
   <div class="border-top border-white border-opacity-25 pt-3 mt-2">
-    <button class="btn btn-outline-light btn-sm w-100" (click)="logout()">
-      🚪 Logout
+    <button class="btn btn-outline-light btn-sm w-100"
+            (click)="logout()">
+      🚪 <span class="nav-label">Logout</span>
     </button>
   </div>
 

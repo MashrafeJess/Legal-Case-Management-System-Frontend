@@ -8,7 +8,7 @@ export class CaseService {
 
   constructor(private http: HttpClient) {}
 
-  getAll()                   { return this.http.get<any>(`${this.url}/getall`); }
+  getAll()                   { return this.http.get<any>(`${this.url}/All`); }
   getById(id: number)        { return this.http.get<any>(`${this.url}/getbyid/${id}`); }
   getByLawyer(lawyerId: string) {
     return this.http.get<any>(`${this.url}/getcasebylawyer/${lawyerId}`);

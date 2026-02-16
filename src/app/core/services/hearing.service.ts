@@ -12,11 +12,30 @@ export class HearingService {
     return this.http.get<any>(`${this.url}/by-case/${caseId}`);
   }
 
-  create(payload: { caseId: number; hearingDate: string; isGoing: boolean }) {
+  getById(hearingId: number) {
+    return this.http.get<any>(`${this.url}/${hearingId}`);
+  }
+
+  getAll() {
+    return this.http.get<any>(`${this.url}/getall`);
+  }
+
+  create(payload: {
+    caseId:      number;
+    hearingDate: string;
+    isGoing:     boolean;
+    isPaid:      boolean;
+  }) {
     return this.http.post<any>(`${this.url}/add`, payload);
   }
 
-  update(payload: { hearingId: number; hearingDate: string; isGoing: boolean }) {
+  update(payload: {
+    hearingID:   number;
+    caseId:      number;
+    hearingDate: string;
+    isGoing:     boolean;
+    isPaid:      boolean;
+  }) {
     return this.http.put<any>(`${this.url}/update`, payload);
   }
 

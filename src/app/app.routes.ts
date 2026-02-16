@@ -72,6 +72,16 @@ export const routes: Routes = [
         loadComponent: () => import('./features/hearings/hearing-form/hearing-form')
           .then(m => m.HearingForm)
       },
+      {
+        path: 'hearings/edit/:id',
+        loadComponent: () => import('./features/hearings/hearing-form/hearing-form')
+          .then(m => m.HearingForm)
+      },
+      {
+        path: 'hearings/create',
+        loadComponent: () => import('./features/hearings/hearing-form/hearing-form')
+          .then(m => m.HearingForm)
+      },
 
       {
         path: 'hearings/edit/:id',
@@ -80,19 +90,36 @@ export const routes: Routes = [
       },
       { path: 'hearings', loadComponent: () => import('./features/hearings/hearing-list/hearing-list').then(m => m.HearingList) },
       { path: 'files', loadComponent: () => import('./features/files/file-list/file-list').then(m => m.FileList) },
+      {
+  path: 'case-types',
+  loadComponent: () => import('./features/case-types/case-type-list/case-type-list')
+    .then(m => m.CaseTypeList)
+},
+{
+  path: 'payment-methods',
+  loadComponent: () => import('./features/payment-methods/payment-method-list/payment-method-list')
+    .then(m => m.PaymentMethodList)
+},
       // { path: 'mail',         loadComponent: () => import('./features/mail/mail').then(m => m.Mail) },
       // { path: 'roles',        loadComponent: () => import('./features/roles/role-list/role-list').then(m => m.RoleList) },
       // { path: 'case-types',   loadComponent: () => import('./features/case-types/case-type-list/case-type-list').then(m => m.CaseTypeList) },
       // { path: 'clients',      loadComponent: () => import('./features/users/client-list/client-list').then(m => m.ClientList) },
       // { path: 'lawyers',      loadComponent: () => import('./features/users/lawyer-list/lawyer-list').then(m => m.LawyerList) },
       // { path: 'reports',      loadComponent: () => import('./features/reports/reports').then(m => m.Reports) },
-
+      {
+        path: 'users/create',
+        canActivate: [authGuard, roleGuard],
+        data: { roles: ['Admin'], adminMode: true },  // ✅ flag passed here
+        loadComponent: () => import('./features/auth/register/register')
+          .then(m => m.RegisterComponent)
+      },
       {
         path: 'users',
         canActivate: [roleGuard],
         data: { roles: ['Admin'] },
         loadComponent: () => import('./features/users/user-list/user-list').then(m => m.UserList)
       },
+
     ]
   },
 

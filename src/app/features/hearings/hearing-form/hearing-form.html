@@ -1,1 +1,92 @@
-<p>hearing-form works!</p>
+<div class="d-flex min-vh-100">
+  <app-sidebar />
+
+  <div class="flex-grow-1 bg-light">
+
+    <div class="bg-white border-bottom px-4 py-3 d-flex align-items-center gap-3">
+      <button class="btn btn-sm btn-outline-secondary"
+              (click)="goBack()">← Back</button>
+      <h6 class="mb-0 fw-semibold">
+        {{ isEditMode ? 'Edit Hearing' : 'Add Hearing' }}
+      </h6>
+    </div>
+
+    <div class="p-4">
+      <div class="card border-0 shadow-sm" style="max-width: 500px;">
+        <div class="card-body p-4">
+
+          <!-- Info -->
+          <div class="alert alert-info small py-2 mb-3">
+            📅 {{ isEditMode ? 'Editing' : 'Adding' }} hearing for
+            <b>Case #{{ caseId }}</b>
+          </div>
+
+          <div class="alert alert-danger small py-2"
+               *ngIf="errorMessage">{{ errorMessage }}</div>
+          <div class="alert alert-success small py-2"
+               *ngIf="successMessage">{{ successMessage }}</div>
+
+          <form [formGroup]="hearingForm" (ngSubmit)="onSubmit()">
+
+            <div class="mb-3">
+              <label class="form-label small fw-semibold">
+                Hearing Date & Time
+              </label>
+              <input type="datetime-local"
+                     class="form-control"
+                     formControlName="hearingDate"
+                     [class.is-invalid]="isInvalid('hearingDate')"/>
+              <div class="invalid-feedback">
+                Hearing date is required.
+              </div>
+            </div>
+
+            <div class="mb-4">
+              <label class="form-label small fw-semibold d-block">
+                Hearing Status
+              </label>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input"
+                       type="radio"
+                       formControlName="isGoing"
+                       [value]="true"
+                       id="going"/>
+                <label class="form-check-label small" for="going">
+                  Scheduled
+                </label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input"
+                       type="radio"
+                       formControlName="isGoing"
+                       [value]="false"
+                       id="notGoing"/>
+                <label class="form-check-label small" for="notGoing">
+                  Cancelled
+                </label>
+              </div>
+            </div>
+
+            <div class="d-flex gap-2">
+              <button type="submit"
+                      class="btn btn-primary btn-sm"
+                      [disabled]="loading">
+                <span *ngIf="loading"
+                      class="spinner-border spinner-border-sm me-1"></span>
+                {{ loading
+                    ? 'Saving...'
+                    : (isEditMode ? 'Update Hearing' : 'Add Hearing') }}
+              </button>
+              <button type="button"
+                      class="btn btn-outline-secondary btn-sm"
+                      (click)="goBack()">
+                Cancel
+              </button>
+            </div>
+
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
