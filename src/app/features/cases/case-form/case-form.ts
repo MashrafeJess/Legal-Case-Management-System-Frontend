@@ -15,37 +15,38 @@ import { Sidebar } from '../../../shared/components/sidebar/sidebar';
   selector: 'app-case-form',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, ReactiveFormsModule, Sidebar],
+  imports: [CommonModule, ReactiveFormsModule,Sidebar],
   templateUrl: './case-form.html'
 })
 export class CaseForm implements OnInit {
-  caseForm!:     FormGroup;
-  loading        = false;
-  errorMessage   = '';
+  caseForm!: FormGroup;
+  loading = false;
+  errorMessage = '';
   successMessage = '';
-  isEditMode     = false;
-  caseId!:       number;
+  isEditMode = false;
+  caseId!: number;
   selectedFiles: File[] = [];
-  caseTypes:     any[]  = [];
-  lawyers:       any[]  = [];
+  caseTypes: any[] = [];
+  lawyers: any[] = [];
 
   constructor(
-    private fb:              FormBuilder,
-    private caseService:     CaseService,
+    private fb: FormBuilder,
+    private caseService: CaseService,
     private caseTypeService: CaseTypeService,
-    private userService:     UserService,
-    private authService:     AuthService,
-    private route:           ActivatedRoute,
-    private router:          Router,
-    private cdr:             ChangeDetectorRef
-  ) {}
+    private userService: UserService,
+    private authService: AuthService,
+    private route: ActivatedRoute,
+    private router: Router,
+    private cdr: ChangeDetectorRef
+  ) { }
 
   ngOnInit(): void {
+    console.log('CaseForm loaded — isEditMode:', this.isEditMode);
     this.caseForm = this.fb.group({
-      caseName:       ['', Validators.required],
-      email:          ['', [Validators.required, Validators.email]],
-      caseType:       ['', Validators.required],
-      fee:            ['', Validators.required],
+      caseName: ['', Validators.required],
+      email: ['', [Validators.required, Validators.email]],
+      caseType: ['', Validators.required],
+      fee: ['', Validators.required],
       caseHandlingBy: ['', Validators.required]
     });
 
@@ -55,7 +56,7 @@ export class CaseForm implements OnInit {
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
       this.isEditMode = true;
-      this.caseId     = +id;
+      this.caseId = +id;
       this.loadCase();
     }
   }
@@ -68,7 +69,9 @@ export class CaseForm implements OnInit {
           this.cdr.detectChanges();
         }
       },
-      error: () => {}
+      error: (err) => {
+        console.error('CaseType error:', err);
+      }
     });
   }
 
@@ -80,7 +83,9 @@ export class CaseForm implements OnInit {
           this.cdr.detectChanges();
         }
       },
-      error: () => {}
+      error: (err) => {
+        console.error('Lawyer error:', err);
+      }
     });
   }
 
@@ -93,10 +98,10 @@ export class CaseForm implements OnInit {
         if (res.success) {
           const c = res.data;
           this.caseForm.patchValue({
-            caseName:       c.caseName,
-            email:          c.email,
-            caseType:       c.caseType,
-            fee:            c.fee,
+            caseName: c.caseName,
+            email: c.email,
+            caseType: c.caseType,
+            fee: c.fee,
             caseHandlingBy: c.caseHandlingBy
           });
         }
@@ -105,7 +110,7 @@ export class CaseForm implements OnInit {
       },
       error: () => {
         this.errorMessage = 'Failed to load case.';
-        this.loading      = false;
+        this.loading = false;
         this.cdr.detectChanges();
       }
     });
@@ -120,7 +125,7 @@ export class CaseForm implements OnInit {
   }
 
   formatSize(bytes: number): string {
-    if (bytes < 1024)        return `${bytes} B`;
+    if (bytes < 1024) return `${bytes} B`;
     if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
     return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
   }
@@ -137,15 +142,15 @@ export class CaseForm implements OnInit {
       return;
     }
 
-    this.loading      = true;
+    this.loading = true;
     this.errorMessage = '';
     this.cdr.detectChanges();
 
     const fd = new FormData();
-    fd.append('CaseName',       this.caseForm.value.caseName);
-    fd.append('Email',          this.caseForm.value.email);
-    fd.append('CaseTypeId',     this.caseForm.value.caseType);
-    fd.append('Fee',            this.caseForm.value.fee);
+    fd.append('CaseName', this.caseForm.value.caseName);
+    fd.append('Email', this.caseForm.value.email);
+    fd.append('CaseTypeId', this.caseForm.value.caseType);
+    fd.append('Fee', this.caseForm.value.fee);
     fd.append('CaseHandlingBy', this.caseForm.value.caseHandlingBy);
 
     if (this.isEditMode) {
@@ -163,25 +168,12 @@ export class CaseForm implements OnInit {
     request.subscribe({
       next: (res) => {
         if (res.success) {
-          if (!this.isEditMode) {
-            // ✅ New case — redirect to pay consultation fee
-            this.successMessage = 'Case created! Redirecting to payment...';
-            this.cdr.detectChanges();
-            setTimeout(() => {
-              this.router.navigate(['/payments/initiate'], {
-                queryParams: {
-                  caseId: res.data.caseId,
-                  amount: res.data.fee
-                }
-              });
-            }, 1500);
-          } else {
-            // Edit — go back to case detail
-            this.successMessage = 'Case updated successfully!';
-            this.cdr.detectChanges();
-            setTimeout(() =>
-              this.router.navigate(['/cases', this.caseId]), 1500);
-          }
+          this.successMessage = `Case ${this.isEditMode
+            ? 'updated' : 'created'} successfully!`;
+          this.cdr.detectChanges();
+          // ✅ Admin always goes back to case list
+          setTimeout(() =>
+            this.router.navigate(['/cases']), 1500);
         } else {
           this.errorMessage = res.message || 'Operation failed.';
         }
@@ -190,7 +182,7 @@ export class CaseForm implements OnInit {
       },
       error: (err) => {
         this.errorMessage = err.error?.message || 'Unable to connect.';
-        this.loading      = false;
+        this.loading = false;
         this.cdr.detectChanges();
       }
     });

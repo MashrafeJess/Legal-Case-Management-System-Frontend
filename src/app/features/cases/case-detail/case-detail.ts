@@ -8,6 +8,8 @@ import { CaseService } from '../../../core/services/case.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { FileService } from '../../../core/services/file.service';
 import { HearingService } from '../../../core/services/hearing.service';
+import { PaymentService } from '../../../core/services/payment.service';
+import { PaymentMethodService } from '../../../core/services/payment-method.service';
 import { Sidebar } from '../../../shared/components/sidebar/sidebar';
 
 @Component({
@@ -19,22 +21,30 @@ import { Sidebar } from '../../../shared/components/sidebar/sidebar';
   templateUrl: './case-detail.html'
 })
 export class CaseDetail implements OnInit {
-  caseDetail:  any    = null;
-  loading             = true;
-  errorMessage        = '';
-  isAdmin             = false;
-  isLawyer            = false;
-  isClient            = false;
-  caseId!:     number;
+  caseDetail:   any    = null;
+  loading              = true;
+  errorMessage         = '';
+  successMessage       = '';
+  isAdmin              = false;
+  isLawyer             = false;
+  isClient             = false;
+  caseId!:      number;
+  cashMethodId: number = 0;
+
+  // ✅ Track loading state per hearing
+  cashLoading                    = false;
+  cashLoadingHearing: number | null = null;
 
   constructor(
-    private route:          ActivatedRoute,
-    private router:         Router,
-    private caseService:    CaseService,
-    private authService:    AuthService,
-    private fileService:    FileService,
-    private hearingService: HearingService,
-    private cdr:            ChangeDetectorRef
+    private route:               ActivatedRoute,
+    private router:              Router,
+    private caseService:         CaseService,
+    private authService:         AuthService,
+    private fileService:         FileService,
+    private hearingService:      HearingService,
+    private paymentService:      PaymentService,
+    private paymentMethodService: PaymentMethodService,
+    private cdr:                 ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -50,6 +60,17 @@ export class CaseDetail implements OnInit {
     }
 
     this.caseId = +idParam;
+
+    // ✅ Load cash method id for Admin/Lawyer
+    if (this.isAdmin || this.isLawyer) {
+      this.paymentMethodService.getCashMethodId().subscribe({
+        next: (id) => {
+          this.cashMethodId = id ?? 0;
+          this.cdr.detectChanges();
+        }
+      });
+    }
+
     this.loadCase();
   }
 
@@ -73,7 +94,7 @@ export class CaseDetail implements OnInit {
     });
   }
 
-  // ── Files ──────────────────────────────────────────────
+  // ── File helpers ───────────────────────────────────────
   getFileIcon(contentType: string): string {
     if (contentType?.includes('pdf'))   return '📄';
     if (contentType?.includes('image')) return '🖼️';
@@ -83,6 +104,7 @@ export class CaseDetail implements OnInit {
   }
 
   formatSize(bytes: number): string {
+    if (!bytes)              return '—';
     if (bytes < 1024)        return `${bytes} B`;
     if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
     return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
@@ -105,7 +127,116 @@ export class CaseDetail implements OnInit {
     });
   }
 
-  // ── Case Actions ───────────────────────────────────────
+  // ── Case payment ───────────────────────────────────────
+
+  // Client pays online
+  payOnline(): void {
+    this.router.navigate(['/payments/initiate'], {
+      queryParams: {
+        caseId: this.caseId,
+        amount: this.caseDetail.fee
+      }
+    });
+  }
+
+  // ✅ Admin/Lawyer records cash — one click
+  recordCash(): void {
+    if (!this.cashMethodId) {
+      this.errorMessage =
+        'Cash payment method not found. Please add it in Payment Methods.';
+      this.cdr.detectChanges();
+      return;
+    }
+
+    if (!confirm(
+      `Record cash payment of ৳${this.caseDetail.fee} for this case?`
+    )) return;
+
+    this.cashLoading  = true;
+    this.errorMessage = '';
+    this.cdr.detectChanges();
+
+    this.paymentService.cashPayment({
+      caseId:          this.caseId,
+      hearingId:       null,
+      amount:          this.caseDetail.fee,
+      paymentMethodId: this.cashMethodId
+    }).subscribe({
+      next: (res) => {
+        if (res.success) {
+          this.successMessage = 'Cash payment recorded successfully!';
+          this.loadCase();   // ✅ reload to show Paid
+        } else {
+          this.errorMessage = res.message || 'Failed to record payment.';
+        }
+        this.cashLoading = false;
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        this.errorMessage =
+          err.error?.message || 'Unable to record payment.';
+        this.cashLoading  = false;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  // ── Hearing payment ────────────────────────────────────
+
+  // Client pays hearing online
+  payHearingOnline(hearingId: number): void {
+    this.router.navigate(['/payments/initiate'], {
+      queryParams: {
+        caseId:    this.caseId,
+        hearingId: hearingId,
+        amount:    this.caseDetail.fee
+      }
+    });
+  }
+
+  // ✅ Admin/Lawyer records hearing cash — one click
+  recordHearingCash(hearingId: number): void {
+    if (!this.cashMethodId) {
+      this.errorMessage =
+        'Cash payment method not found. Please add it in Payment Methods.';
+      this.cdr.detectChanges();
+      return;
+    }
+
+    if (!confirm(
+      `Record cash payment of ৳${this.caseDetail.fee} for this hearing?`
+    )) return;
+
+    this.cashLoadingHearing = hearingId;
+    this.errorMessage       = '';
+    this.cdr.detectChanges();
+
+    this.paymentService.cashPayment({
+      caseId:          this.caseId,
+      hearingId:       hearingId,
+      amount:          this.caseDetail.fee,
+      paymentMethodId: this.cashMethodId
+    }).subscribe({
+      next: (res) => {
+        if (res.success) {
+          this.successMessage = 'Hearing cash payment recorded!';
+          this.loadCase();   // ✅ reload to show Paid
+        } else {
+          this.errorMessage = res.message || 'Failed.';
+        }
+        this.cashLoadingHearing = null;
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        this.errorMessage       =
+          err.error?.message || 'Unable to record payment.';
+        this.cashLoadingHearing = null;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  // ── Case actions ───────────────────────────────────────
   editCase(): void {
     this.router.navigate(['/cases/edit', this.caseId]);
   }
@@ -127,7 +258,7 @@ export class CaseDetail implements OnInit {
     });
   }
 
-  // ── Hearing Actions ────────────────────────────────────
+  // ── Hearing actions ────────────────────────────────────
   addHearing(): void {
     this.router.navigate(['/hearings/create'],
       { queryParams: { caseId: this.caseId } });
@@ -141,7 +272,7 @@ export class CaseDetail implements OnInit {
   deleteHearing(hearingId: number): void {
     if (!confirm('Delete this hearing?')) return;
     this.hearingService.delete(hearingId).subscribe({
-      next: (res: { success: any; message: string; }) => {
+      next: (res) => {
         if (res.success) this.loadCase();
         else {
           this.errorMessage = res.message;
@@ -151,17 +282,6 @@ export class CaseDetail implements OnInit {
       error: () => {
         this.errorMessage = 'Failed to delete hearing.';
         this.cdr.detectChanges();
-      }
-    });
-  }
-
-  // ✅ Client pays hearing fee — uses case fee amount
-  payHearing(hearingId: number): void {
-    this.router.navigate(['/payments/initiate'], {
-      queryParams: {
-        caseId:    this.caseId,
-        hearingId: hearingId,
-        amount:    this.caseDetail.fee
       }
     });
   }

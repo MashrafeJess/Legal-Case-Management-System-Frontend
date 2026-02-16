@@ -1,0 +1,142 @@
+<div class="d-flex min-vh-100">
+  <app-sidebar />
+
+  <div class="flex-grow-1 bg-light">
+
+    <div class="bg-white border-bottom px-4 py-3 d-flex
+                align-items-center justify-content-between">
+      <h6 class="mb-0 fw-semibold">Case Types</h6>
+      <button class="btn btn-primary btn-sm"
+              (click)="openForm()">
+        + Add Case Type
+      </button>
+    </div>
+
+    <div class="p-4">
+
+      <!-- Inline Form — Add / Edit -->
+      <div class="card border-0 shadow-sm mb-4"
+           *ngIf="showForm">
+        <div class="card-header bg-white border-bottom fw-semibold small">
+          {{ editingId ? 'Edit Case Type' : 'Add Case Type' }}
+        </div>
+        <div class="card-body">
+
+          <div class="alert alert-danger small py-2"
+               *ngIf="formError">{{ formError }}</div>
+
+          <form [formGroup]="caseTypeForm"
+                (ngSubmit)="onSubmit()">
+            <div class="row g-3 align-items-end">
+              <div class="col-12 col-sm-4">
+                <label class="form-label small fw-semibold">
+                  Type Name
+                </label>
+                <input type="text"
+                       class="form-control form-control-sm"
+                       formControlName="caseTypeName"
+                       placeholder="e.g. Criminal"
+                       [class.is-invalid]="isInvalid('caseTypeName')"/>
+                <div class="invalid-feedback">Name is required.</div>
+              </div>
+              <div class="col-12 col-sm-5">
+                <label class="form-label small fw-semibold">
+                  Description
+                </label>
+                <input type="text"
+                       class="form-control form-control-sm"
+                       formControlName="caseTypeDescription"
+                       placeholder="Brief description"/>
+              </div>
+              <div class="col-auto d-flex gap-2">
+                <button type="submit"
+                        class="btn btn-primary btn-sm"
+                        [disabled]="formLoading">
+                  <span *ngIf="formLoading"
+                        class="spinner-border spinner-border-sm me-1"></span>
+                  {{ formLoading ? 'Saving...' : (editingId ? 'Update' : 'Add') }}
+                </button>
+                <button type="button"
+                        class="btn btn-outline-secondary btn-sm"
+                        (click)="cancelForm()">
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Alert -->
+      <div class="alert alert-danger small py-2" *ngIf="errorMessage">
+        {{ errorMessage }}
+      </div>
+      <div class="alert alert-success small py-2" *ngIf="successMessage">
+        {{ successMessage }}
+      </div>
+
+      <!-- Table -->
+      <div class="card border-0 shadow-sm">
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table table-hover mb-0 small">
+              <thead class="table-light">
+                <tr>
+                  <th class="px-3 py-2">#</th>
+                  <th class="px-3 py-2">Type Name</th>
+                  <th class="px-3 py-2">Description</th>
+                  <th class="px-3 py-2">Created Date</th>
+                  <th class="px-3 py-2">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+
+                <tr *ngIf="loading">
+                  <td colspan="5" class="text-center py-4">
+                    <div class="spinner-border spinner-border-sm text-primary"></div>
+                  </td>
+                </tr>
+
+                <ng-container *ngIf="!loading">
+                  <tr *ngFor="let t of caseTypes; let i = index">
+                    <td class="px-3 py-2">{{ i + 1 }}</td>
+                    <td class="px-3 py-2 fw-semibold">
+                      {{ t.caseTypeName }}
+                    </td>
+                    <td class="px-3 py-2 text-muted">
+                      {{ t.caseTypeDescription || '—' }}
+                    </td>
+                    <td class="px-3 py-2">
+                      {{ t.createdDate | date:'mediumDate' }}
+                    </td>
+                    <td class="px-3 py-2">
+                      <div class="d-flex gap-1">
+                        <button class="btn btn-outline-warning btn-sm"
+                                (click)="editType(t)">
+                          Edit
+                        </button>
+                        <button class="btn btn-outline-danger btn-sm"
+                                (click)="deleteType(t.caseTypeId)">
+                          Delete
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+
+                  <tr *ngIf="caseTypes.length === 0">
+                    <td colspan="5"
+                        class="text-center text-muted py-4">
+                      No case types found.
+                    </td>
+                  </tr>
+                </ng-container>
+
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

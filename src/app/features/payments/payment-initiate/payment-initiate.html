@@ -3,7 +3,8 @@
 
   <div class="flex-grow-1 bg-light">
 
-    <div class="bg-white border-bottom px-4 py-3 d-flex align-items-center gap-3">
+    <div class="bg-white border-bottom px-4 py-3
+                d-flex align-items-center gap-3">
       <button class="btn btn-sm btn-outline-secondary"
               (click)="goBack()">← Back</button>
       <h6 class="mb-0 fw-semibold">
@@ -18,39 +19,36 @@
           <!-- Info banner -->
           <div class="alert alert-info small py-2 mb-3">
             <span *ngIf="!hearingId">
-              💼 Consultation fee payment for <b>Case #{{ caseId }}</b>
+              💼 Consultation fee for <b>Case #{{ caseId }}</b>
             </span>
             <span *ngIf="hearingId">
-              📅 Hearing fee payment for <b>Case #{{ caseId }}</b>
+              📅 Hearing fee for
+              <b>Case #{{ caseId }}</b>
             </span>
           </div>
 
-          <div class="alert alert-danger small py-2" *ngIf="errorMessage">
-            {{ errorMessage }}
-          </div>
+          <div class="alert alert-danger small py-2"
+               *ngIf="errorMessage">{{ errorMessage }}</div>
 
           <form [formGroup]="paymentForm" (ngSubmit)="onSubmit()">
 
-            <div class="row g-3 mb-3">
-              <div class="col-6">
-                <label class="form-label small fw-semibold">Case ID</label>
-                <input type="number"
-                       class="form-control"
-                       formControlName="caseId"
-                       readonly/>
+            <!-- Amount — display only, not editable -->
+            <div class="mb-3">
+              <label class="form-label small fw-semibold">
+                Amount (৳)
+              </label>
+              <div class="form-control bg-light fw-bold text-primary"
+                   style="cursor: not-allowed;">
+                ৳ {{ paymentForm.get('amount')?.value | number }}
               </div>
-              <div class="col-6">
-                <label class="form-label small fw-semibold">Amount (৳)</label>
-                <input type="number"
-                       class="form-control"
-                       formControlName="amount"
-                       [class.is-invalid]="isInvalid('amount')"/>
-                <div class="invalid-feedback">Amount is required.</div>
-              </div>
+              <input type="hidden" formControlName="amount"/>
             </div>
 
+            <!-- Payment Method — online only, no cash -->
             <div class="mb-3">
-              <label class="form-label small fw-semibold">Payment Method</label>
+              <label class="form-label small fw-semibold">
+                Payment Method
+              </label>
               <select class="form-select"
                       formControlName="paymentMethodId"
                       [class.is-invalid]="isInvalid('paymentMethodId')">
@@ -60,11 +58,15 @@
                   {{ m.paymentMethodName }}
                 </option>
               </select>
-              <div class="invalid-feedback">Payment method is required.</div>
+              <div class="invalid-feedback">
+                Payment method is required.
+              </div>
             </div>
 
             <div class="mb-3">
-              <label class="form-label small fw-semibold">Your Name</label>
+              <label class="form-label small fw-semibold">
+                Your Name
+              </label>
               <input type="text"
                      class="form-control"
                      formControlName="customerName"
@@ -78,7 +80,9 @@
                      class="form-control"
                      formControlName="customerEmail"
                      [class.is-invalid]="isInvalid('customerEmail')"/>
-              <div class="invalid-feedback">Valid email is required.</div>
+              <div class="invalid-feedback">
+                Valid email is required.
+              </div>
             </div>
 
             <div class="row g-3 mb-4">
@@ -97,7 +101,9 @@
                        class="form-control"
                        formControlName="customerAddress"
                        [class.is-invalid]="isInvalid('customerAddress')"/>
-                <div class="invalid-feedback">Address is required.</div>
+                <div class="invalid-feedback">
+                  Address is required.
+                </div>
               </div>
             </div>
 
@@ -106,7 +112,7 @@
                     [disabled]="loading">
               <span *ngIf="loading"
                     class="spinner-border spinner-border-sm me-2"></span>
-              {{ loading ? 'Redirecting to payment gateway...' : 'Pay Now' }}
+              {{ loading ? 'Redirecting to gateway...' : '💳 Pay Now' }}
             </button>
 
           </form>

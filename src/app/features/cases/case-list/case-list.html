@@ -2,18 +2,15 @@
   <app-sidebar />
 
   <div class="flex-grow-1 bg-light">
-
     <div class="bg-white border-bottom px-4 py-3 d-flex align-items-center justify-content-between">
       <h6 class="mb-0 fw-semibold">All Cases</h6>
-      <button class="btn btn-primary btn-sm"
-              routerLink="/cases/create"
-              *ngIf="isAdmin || isLawyer || isClient">
+      <!-- ✅ Only Admin can create cases -->
+      <button class="btn btn-primary btn-sm" routerLink="/cases/create" *ngIf="isAdmin">
         + New Case
       </button>
     </div>
 
     <div class="p-4">
-
       <div class="alert alert-danger small py-2" *ngIf="errorMessage">
         {{ errorMessage }}
       </div>
@@ -34,7 +31,6 @@
                 </tr>
               </thead>
               <tbody>
-
                 <tr *ngIf="loading">
                   <td colspan="7" class="text-center py-4">
                     <div class="spinner-border spinner-border-sm text-primary"></div>
@@ -49,32 +45,41 @@
                     <td class="px-3 py-2">{{ c.caseHandlingBy || '—' }}</td>
                     <td class="px-3 py-2">{{ c.fee }}</td>
                     <td class="px-3 py-2">
-                      <span class="badge"
-                            [ngClass]="c.isConsultationFeePaid
-                              ? 'bg-success'
-                              : 'bg-warning text-dark'">
+                      <span
+                        class="badge"
+                        [ngClass]="c.isConsultationFeePaid ? 'bg-success' : 'bg-warning text-dark'"
+                      >
                         {{ c.isConsultationFeePaid ? 'Paid' : 'Unpaid' }}
                       </span>
                     </td>
                     <td class="px-3 py-2">
                       <div class="d-flex gap-1 flex-wrap">
-                        <button class="btn btn-outline-primary btn-sm"
-                                (click)="viewCase(c.caseId)">
+                        <button class="btn btn-outline-primary btn-sm" (click)="viewCase(c.caseId)">
                           View
                         </button>
-                        <button class="btn btn-success btn-sm"
-                                *ngIf="isClient && !c.isConsultationFeePaid"
-                                (click)="payFee(c.caseId, c.fee)">
+
+                        <!-- ✅ Pay Fee — client only, unpaid only -->
+                        <button
+                          class="btn btn-success btn-sm"
+                          *ngIf="isClient && !c.isConsultationFeePaid"
+                          (click)="payFee(c.caseId, c.fee)"
+                        >
                           Pay Fee
                         </button>
-                        <button class="btn btn-outline-warning btn-sm"
-                                *ngIf="isAdmin || isLawyer"
-                                (click)="editCase(c.caseId)">
+
+                        <!-- ✅ Edit/Delete — Admin only -->
+                        <button
+                          class="btn btn-outline-warning btn-sm"
+                          *ngIf="isAdmin"
+                          (click)="editCase(c.caseId)"
+                        >
                           Edit
                         </button>
-                        <button class="btn btn-outline-danger btn-sm"
-                                *ngIf="isAdmin"
-                                (click)="deleteCase(c.caseId)">
+                        <button
+                          class="btn btn-outline-danger btn-sm"
+                          *ngIf="isAdmin"
+                          (click)="deleteCase(c.caseId)"
+                        >
                           Delete
                         </button>
                       </div>
@@ -82,18 +87,14 @@
                   </tr>
 
                   <tr *ngIf="cases.length === 0">
-                    <td colspan="7" class="text-center text-muted py-4">
-                      No cases found.
-                    </td>
+                    <td colspan="7" class="text-center text-muted py-4">No cases found.</td>
                   </tr>
                 </ng-container>
-
               </tbody>
             </table>
           </div>
         </div>
       </div>
-
     </div>
   </div>
 </div>

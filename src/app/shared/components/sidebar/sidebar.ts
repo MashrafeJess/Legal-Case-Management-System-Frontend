@@ -8,11 +8,7 @@ import { AuthService } from '../../../core/services/auth.service';
   standalone: true,
   imports: [CommonModule, RouterLink, RouterLinkActive],
   templateUrl: './sidebar.html',
-  styles: [`
-    .hover-nav:hover {
-      background: rgba(255, 255, 255, 0.15);
-    }
-  `]
+  styles: []
 })
 export class Sidebar implements OnInit {
   userName    = '';
